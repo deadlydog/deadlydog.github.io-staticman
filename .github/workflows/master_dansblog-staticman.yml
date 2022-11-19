@@ -26,12 +26,17 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
+          
+      - name: Zip all of the files to use as the artifact
+        uses: montudor/action-zip@v1.0.0
+        with:
+          args: zip -qq -r artifact.zip ./
       
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: .
+          path: artifact.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -46,6 +51,11 @@ jobs:
         with:
           name: node-app
 
+      - name: Unzip artifact
+        uses: montudor/action-zip@v1.0.0
+        with:
+          args: unzip -qq artifact.zip -d staticman-artifacts
+
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
@@ -53,4 +63,4 @@ jobs:
           app-name: 'DansBlog-Staticman'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_9E1D725832C64CEAAC3BD56F9A0BBF33 }}
-          package: .
+          package: staticman-artifacts/.
