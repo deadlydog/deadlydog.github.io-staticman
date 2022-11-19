@@ -1,7 +1,5 @@
 const bodyParser = require('body-parser')
-// ===== Start of Dan's Edits =====
-// const config = require('./config')
-// ===== End of Dan's Edits =====
+const config = require('./config')
 const express = require('express')
 const ExpressBrute = require('express-brute')
 const GithubWebHook = require('express-github-webhook')
@@ -173,20 +171,12 @@ class StaticmanAPI {
   }
 
 // ===== Start of Dan's Edits =====
-// --- Use `process.env.PORT` instead of `config.get('port')` ---
-//
-//   start (callback) {
-//     this.instance = this.server.listen(config.get('port'), () => {
-//       if (typeof callback === 'function') {
-//         callback(config.get('port'))
-//       }
-//     })
-//   }
+// --- Use `process.env.PORT` instead of `config.get('port')` when available ---
 
   start (callback) {
-    this.instance = this.server.listen(process.env.PORT, () => {
+    this.instance = this.server.listen(process.env.PORT || config.get('port'), () => {
       if (typeof callback === 'function') {
-        callback(process.env.PORT)
+        callback(process.env.PORT || config.get('port'))
       }
     })
   }
