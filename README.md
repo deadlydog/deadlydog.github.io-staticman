@@ -4,6 +4,29 @@
 
 > Static sites with superpowers
 
+## Info for Dan!!!
+
+I forked this repo from [the official Staticman repo](https://github.com/eduardoboucas/staticman) in order to deploy my own instance to Azure.
+Previously I had my own instance deployed to Heroku, which you can [view the archived code for here](https://github.com/deadlydog/deadlydog.github.io-staticman-heroku), but when Heroku removed their free tier I moved to Azure.
+
+To deploy to Azure, in the Azure portal I created a new Web App and granted it permissions to access this git repo.
+It created [the GitHub action](.github/workflows/master_dansblog-staticman.yml) that is used to deploy the code to the Web App anytime code is pushed to the master branch.
+
+In the Azure portal for the Web App, I added the following Application Settings:
+
+- `AKISMET_API_KEY`: [redacted]
+- `AKISMET_SITE`: https://blog.danskingdom.com
+- `GITHUB_TOKEN`: [redacted]
+- `NODE_ENV`: production
+- `RSA_PRIVATE_KEY`: [redacted]
+- `SCM_DO_BUILD_DURING_DEPLOYMENT`: true
+
+### Initial problem after deploying to Azure and resolution
+
+After deploying the code to Azure, I was getting a `You do not have permission to view this directory or page.` error message when viewing the site root <https://dansblog-staticman.azurewebsites.net>.
+[This StackOverflow answer](https://stackoverflow.com/a/69649561/602585) pointed me in the direction of the problem being there was no root web.config file in the site.
+[This Azure Docs issue](https://github.com/MicrosoftDocs/azure-docs/issues/11848) pointed me to [the official MS docs that described the problem](https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs?tabs=windows&pivots=development-environment-vscode#configure-the-app-service-app-and-deploy-code) and mention the solution is to add the `SCM_DO_BUILD_DURING_DEPLOYMENT` application setting to have Azure automatically create the web.config file when the site is deployed.
+
 ## Introduction
 
 Staticman is a Node.js application that receives user-generated content and uploads it as data files to a GitHub and/or GitLab repository. In practice, this allows you to have dynamic content (e.g. blog post comments) as part of a fully static website, as long as your site automatically deploys on every push to GitHub and/or GitLab, as seen on [GitHub Pages](https://pages.github.com/), [GitLab Pages](https://about.gitlab.com/product/pages/), [Netlify](http://netlify.com/) and others.
