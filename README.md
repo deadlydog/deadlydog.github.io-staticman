@@ -41,7 +41,7 @@ For Azure node apps, they need to obtain the port number to listen to from the `
 
 ### Things I changed
 
-- In [PR #2](https://github.com/deadlydog/deadlydog.github.io-staticman/pull/2) I updated the [server.js](server.js) file, starting at line 173, to use the `process.env.PORT` variable for the port number, rather than the PORT environment variable from the config.
+- In [PR #2](https://github.com/deadlydog/deadlydog.github.io-staticman/pull/2) I updated the [server.js](server.js) file to use the `process.env.PORT` variable for the port number, rather than the PORT environment variable from the config.
 
 ## Introduction
 
