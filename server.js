@@ -1,5 +1,7 @@
 const bodyParser = require('body-parser')
-const config = require('./config')
+// ===== Start of Dan's Edits =====
+//const config = require('./config')
+// ===== End of Dan's Edits =====
 const express = require('express')
 const ExpressBrute = require('express-brute')
 const GithubWebHook = require('express-github-webhook')
