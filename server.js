@@ -171,6 +171,8 @@ class StaticmanAPI {
   }
 
 // ===== Start of Dan's Edits =====
+// --- Use `process.env.PORT` instead of `config.get('port')` ---
+//
 //   start (callback) {
 //     this.instance = this.server.listen(config.get('port'), () => {
 //       if (typeof callback === 'function') {
@@ -179,16 +181,13 @@ class StaticmanAPI {
 //     })
 //   }
 
-	start(callback)
-	{
-		this.instance = this.server.listen(process.env.PORT, () =>
-		{
-			if (typeof callback === 'function')
-			{
-				callback(process.env.PORT)
-			}
-		})
-	}
+  start (callback) {
+    this.instance = this.server.listen(process.env.PORT, () => {
+      if (typeof callback === 'function') {
+        callback(process.env.PORT)
+      }
+    })
+  }
 // ===== End of Dan's Edits =====
 
   close () {
