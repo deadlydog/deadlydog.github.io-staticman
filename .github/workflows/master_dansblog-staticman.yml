@@ -3,12 +3,6 @@
 
 name: Build and deploy Node.js app to Azure Web App - DansBlog-Staticman
 
-on:
-  push:
-    branches:
-      - master
-  workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,12 +20,12 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
-          
+
       - name: Zip all of the files to use as the artifact
         uses: montudor/action-zip@v1.0.0
         with:
           args: zip -qq -r artifact.zip ./
-      
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:

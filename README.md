@@ -10,7 +10,8 @@ I forked this repo from [the official Staticman repo](https://github.com/eduardo
 Previously I had my own instance deployed to Heroku, which you can [view the archived code for here](https://github.com/deadlydog/deadlydog.github.io-staticman-heroku), but when Heroku removed their free tier I moved to Azure.
 
 To deploy to Azure, in the Azure portal I created a new Web App and granted it permissions to access this git repo.
-It created [the GitHub action](.github/workflows/master_dansblog-staticman.yml) that is used to deploy the code to the Web App anytime code is pushed to the master branch.
+It created [the GitHub action](.github/workflows/master_dansblog-staticman.yml) that is used to deploy the code to the Web App.
+Rather than enabling CI/CD, you must manually trigger [the GitHub action](.github/workflows/master_dansblog-staticman.yml) to deploy the code to Azure.
 
 In the Azure portal for the Web App, I added the following Application Settings:
 
