@@ -27,6 +27,21 @@ After deploying the code to Azure, I was getting a `You do not have permission t
 [This StackOverflow answer](https://stackoverflow.com/a/69649561/602585) pointed me in the direction of the problem being there was no root web.config file in the site.
 [This Azure Docs issue](https://github.com/MicrosoftDocs/azure-docs/issues/11848) pointed me to [the official MS docs that described the problem](https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs?tabs=windows&pivots=development-environment-vscode#configure-the-app-service-app-and-deploy-code) and mention the solution is to add the `SCM_DO_BUILD_DURING_DEPLOYMENT` application setting to have Azure automatically create the web.config file when the site is deployed.
 
+Once the web.config was created, I ran into a new problem where the page would load for about a minute and eventaully give a 500 status code message saying `dansblog-staticman.azurewebsites.net is currently unable to handle this request.`.
+Enabling diagnostic logs on my Web App in the Azure Portal showed the following error:
+
+> IIS was not able to access the web.config file for the Web site or application.
+> This can occur if the NTFS permissions are set incorrectly.
+> IIS was not able to process configuration for the Web site or application.
+> The authenticated user does not have permission to use this DLL.
+
+This error message led me to [this StackOverflow answer](https://stackoverflow.com/a/17087978/602585) showing that the problem was my node app was listening to the wrong port.
+For Azure node apps, they need to obtain the port number to listen to from the `process.env.PORT` variable.
+
+### Things I changed
+
+- I updated the [server.js](server.js) file, starting at line 173, to use the `process.env.PORT` variable for the port number, rather than the PORT environment variable from the config.
+
 ## Introduction
 
 Staticman is a Node.js application that receives user-generated content and uploads it as data files to a GitHub and/or GitLab repository. In practice, this allows you to have dynamic content (e.g. blog post comments) as part of a fully static website, as long as your site automatically deploys on every push to GitHub and/or GitLab, as seen on [GitHub Pages](https://pages.github.com/), [GitLab Pages](https://about.gitlab.com/product/pages/), [Netlify](http://netlify.com/) and others.

@@ -170,13 +170,26 @@ class StaticmanAPI {
     }
   }
 
-  start (callback) {
-    this.instance = this.server.listen(config.get('port'), () => {
-      if (typeof callback === 'function') {
-        callback(config.get('port'))
-      }
-    })
-  }
+// ===== Start of Dan's Edits =====
+//   start (callback) {
+//     this.instance = this.server.listen(config.get('port'), () => {
+//       if (typeof callback === 'function') {
+//         callback(config.get('port'))
+//       }
+//     })
+//   }
+
+	start(callback)
+	{
+		this.instance = this.server.listen(process.env.PORT, () =>
+		{
+			if (typeof callback === 'function')
+			{
+				callback(process.env.PORT)
+			}
+		})
+	}
+// ===== End of Dan's Edits =====
 
   close () {
     this.instance.close()
