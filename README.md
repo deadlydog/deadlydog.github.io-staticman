@@ -42,6 +42,8 @@ This required a small change to the app, which you can read about in the section
 
 ### Things I changed
 
+Below is the list of things I changed from the original Staticman repo to make it work on Azure:
+
 - In [PR #2](https://github.com/deadlydog/deadlydog.github.io-staticman/pull/2) I updated the [server.js](server.js) file to use the `process.env.PORT` variable for the port number, rather than the PORT environment variable from the config.
 
 ## Introduction
