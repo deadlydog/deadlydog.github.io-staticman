@@ -46,6 +46,10 @@ Below is the list of things I changed from the original Staticman repo to make i
 
 - In [PR #2](https://github.com/deadlydog/deadlydog.github.io-staticman/pull/2) I updated the [server.js](server.js) file to use the `process.env.PORT` variable for the port number, rather than the PORT environment variable from the config.
 
+In addition, I also updated the GitHub Action used for deployments:
+
+- In [PR #1](https://github.com/deadlydog/deadlydog.github.io-staticman/pull/1) I changed it to zip and unzip the artifacts being stored, reducing deployment time from 40+ minutes to about 6 minutes.
+
 ## Introduction
 
 Staticman is a Node.js application that receives user-generated content and uploads it as data files to a GitHub and/or GitLab repository. In practice, this allows you to have dynamic content (e.g. blog post comments) as part of a fully static website, as long as your site automatically deploys on every push to GitHub and/or GitLab, as seen on [GitHub Pages](https://pages.github.com/), [GitLab Pages](https://about.gitlab.com/product/pages/), [Netlify](http://netlify.com/) and others.
