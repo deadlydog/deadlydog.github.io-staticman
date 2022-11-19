@@ -38,6 +38,7 @@ Enabling diagnostic logs on my Web App in the Azure Portal showed the following 
 
 This error message led me to [this StackOverflow answer](https://stackoverflow.com/a/17087978/602585) showing that the problem was my node app was listening to the wrong port.
 For Azure node apps, they need to obtain the port number to listen to from the `process.env.PORT` variable.
+This required a small change to the app, which you can read about in the section below.
 
 ### Things I changed
 
