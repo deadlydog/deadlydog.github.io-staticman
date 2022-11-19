@@ -170,13 +170,17 @@ class StaticmanAPI {
     }
   }
 
+// ===== Start of Dan's Edits =====
+// --- Use `process.env.PORT` instead of `config.get('port')` when available ---
+
   start (callback) {
-    this.instance = this.server.listen(config.get('port'), () => {
+    this.instance = this.server.listen(process.env.PORT || config.get('port'), () => {
       if (typeof callback === 'function') {
-        callback(config.get('port'))
+        callback(process.env.PORT || config.get('port'))
       }
     })
   }
+// ===== End of Dan's Edits =====
 
   close () {
     this.instance.close()
