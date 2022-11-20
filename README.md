@@ -9,7 +9,7 @@
 I forked this repo from [the official Staticman repo](https://github.com/eduardoboucas/staticman) in order to deploy my own instance to Azure.
 Previously I had my own instance deployed to Heroku, which you can [view the archived code for here](https://github.com/deadlydog/deadlydog.github.io-staticman-heroku), but when Heroku removed their free tier I moved to Azure.
 
-To deploy to Azure, in the Azure portal I created a new Web App and granted it permissions to access this git repo.
+To deploy to Azure, in the Azure portal I created a new Web App (App Service) on my Windows App Service Plan and granted it permissions to access this git repo.
 It created [the GitHub action](.github/workflows/master_dansblog-staticman.yml) that is used to deploy the code to the Web App.
 Rather than enabling CI/CD, you must manually trigger [the GitHub action](.github/workflows/master_dansblog-staticman.yml) to deploy the code to Azure.
 
@@ -26,7 +26,7 @@ To get the legacy `GITHUB_TOKEN` I originally followed [these instructions](http
 I gave that other GitHub account write permissions to my blog repo, and created a GitHub personal access token on that other account, which is the `GITHUB_TOKEN` I used in the Azure portal.
 Setting up the separate GitHub account is a safety measure so that if the `GITHUB_TOKEN` is compromised, it only has write permissions to the blog repo and not to all the repos in my regular GitHub account.
 
-### Initial problem after deploying to Azure and resolution
+### Initial problems after deploying to Azure and resolution
 
 After deploying the code to Azure, I was getting a `You do not have permission to view this directory or page.` error message when viewing the site root <https://dansblog-staticman.azurewebsites.net>.
 [This StackOverflow answer](https://stackoverflow.com/a/69649561/602585) pointed me in the direction of the problem being there was no root web.config file in the site.
@@ -51,6 +51,7 @@ I had tried using the newer recommended method of creating a GitHub App to act a
 I'm assuming it has something to do with copy-pasting the `GITHUB_PRIVATE_KEY` RSA multi-line pem file contents into the Azure portal and it losing some formatting or something, but I'm not certain.
 Since I had things working on Heroku using the legacy GitHub token method, I decided to just stick with that instead.
 It did require a small change to the app though, as the main Staticman repo does not allow using the legacy GitHub token method with v3 endpoints.
+You can read about the change in the section below.
 
 ### Changes I've made since forking
 
@@ -60,7 +61,7 @@ Below is the list of things I changed from the original Staticman repo to make i
   This is required for Azure node apps.
 - In [PR #3](https://github.com/deadlydog/deadlydog.github.io-staticman/pull/3) I updated [GitHub.js](lib/GitHub.js) to allow using the legacy GitHub token authentication method with v3 endpoints.
 
-In addition, I also updated the GitHub Action used for deployments:
+In addition, I also updated the default GitHub Action that the Azure portal had created for deployments:
 
 - In [PR #1](https://github.com/deadlydog/deadlydog.github.io-staticman/pull/1) I changed it to zip and unzip the artifacts being stored, reducing deployment time from 40+ minutes to about 6 minutes.
 
