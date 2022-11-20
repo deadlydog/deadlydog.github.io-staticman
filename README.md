@@ -22,6 +22,10 @@ In the Azure portal for the Web App, I added the following Application Settings:
 - `RSA_PRIVATE_KEY`: [redacted]
 - `SCM_DO_BUILD_DURING_DEPLOYMENT`: true
 
+To get the legacy `GITHUB_TOKEN` I originally followed [these instructions](https://www.datascienceblog.net/post/other/staticman_comments/) and [these ones](https://vincenttam.gitlab.io/post/2018-09-16-staticman-powered-gitlab-pages/2/) to setup a separate GitHub account.
+I gave that other GitHub account write permissions to my blog repo, and created a GitHub personal access token on that other account, which is the `GITHUB_TOKEN` I used in the Azure portal.
+Setting up the separate GitHub account is a safety measure so that if the `GITHUB_TOKEN` is compromised, it only has write permissions to the blog repo and not to all the repos in my regular GitHub account.
+
 ### Initial problem after deploying to Azure and resolution
 
 After deploying the code to Azure, I was getting a `You do not have permission to view this directory or page.` error message when viewing the site root <https://dansblog-staticman.azurewebsites.net>.
@@ -29,7 +33,7 @@ After deploying the code to Azure, I was getting a `You do not have permission t
 [This Azure Docs issue](https://github.com/MicrosoftDocs/azure-docs/issues/11848) pointed me to [the official MS docs that described the problem](https://learn.microsoft.com/en-us/azure/app-service/quickstart-nodejs?tabs=windows&pivots=development-environment-vscode#configure-the-app-service-app-and-deploy-code) and mention the solution is to add the `SCM_DO_BUILD_DURING_DEPLOYMENT` application setting to have Azure automatically create the web.config file when the site is deployed.
 Afterward, I found this same solution mentioned in [this StackOverflow answer](https://stackoverflow.com/a/70721732/602585).
 
-Once the web.config was created, I ran into a new problem where the page would load for about a minute and eventaully give a 500 status code message saying `dansblog-staticman.azurewebsites.net is currently unable to handle this request.`.
+Once the web.config was created, I ran into a new problem where the page would load for about a minute and eventually give a 500 status code message saying `dansblog-staticman.azurewebsites.net is currently unable to handle this request.`.
 Enabling diagnostic logs on my Web App in the Azure Portal showed the following error:
 
 > IIS was not able to access the web.config file for the Web site or application.
@@ -41,11 +45,20 @@ This error message led me to [this StackOverflow answer](https://stackoverflow.c
 For Azure node apps, they need to obtain the port number to listen to from the `process.env.PORT` variable.
 This required a small change to the app, which you can read about in the section below.
 
-### Things I changed
+At this point I was now able to load the root website correctly, but posting comments still resulted in a 500 error.
+Looking in the application logs on the Azure portal again, I could see it was getting an error authenticating against GitHub.
+I had tried using the newer recommended method of creating a GitHub App to act as my Staticman bot for opening PRs by following the instructions at <https://staticman.net/docs/getting-started.html>, and getting the `GITHUB_APP_ID` and `GITHUB_PRIVATE_KEY` environment variables, but I kept getting an authentication error.
+I'm assuming it has something to do with copy-pasting the `GITHUB_PRIVATE_KEY` RSA multi-line pem file contents into the Azure portal and it losing some formatting or something, but I'm not certain.
+Since I had things working on Heroku using the legacy GitHub token method, I decided to just stick with that instead.
+It did require a small change to the app though, as the main Staticman repo does not allow using the legacy GitHub token method with v3 endpoints.
+
+### Changes I've made since forking
 
 Below is the list of things I changed from the original Staticman repo to make it work on Azure:
 
 - In [PR #2](https://github.com/deadlydog/deadlydog.github.io-staticman/pull/2) I updated the [server.js](server.js) file to use the `process.env.PORT` variable for the port number, rather than the PORT environment variable from the config.
+  This is required for Azure node apps.
+- In [PR #3](https://github.com/deadlydog/deadlydog.github.io-staticman/pull/3) I updated [GitHub.js](lib/GitHub.js) to allow using the legacy GitHub token authentication method with v3 endpoints.
 
 In addition, I also updated the GitHub Action used for deployments:
 
