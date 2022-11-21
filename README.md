@@ -48,7 +48,7 @@ This required a small change to the app, which you can read about in the section
 At this point I was now able to load the root website correctly, but posting comments still resulted in a 500 error.
 Looking in the application logs on the Azure portal again, I could see it was getting an error authenticating against GitHub.
 I had tried using the newer recommended method of creating a GitHub App to act as my Staticman bot for opening PRs by following the instructions at <https://staticman.net/docs/getting-started.html>, and getting the `GITHUB_APP_ID` and `GITHUB_PRIVATE_KEY` environment variables, but I kept getting an authentication error.
-I'm assuming it has something to do with copy-pasting the `GITHUB_PRIVATE_KEY` RSA multi-line pem file contents into the Azure portal and it losing some formatting or something, but I'm not certain.
+I'm assuming it has something to do with copy-pasting the `GITHUB_PRIVATE_KEY` RSA multi-line pem file contents into the Azure portal and it losing some formatting or something, but I'm not certain (UPDATE: I found [this guide](https://hajekj.net/2020/04/15/staticman-setup-in-app-service/) which mentions how to overcome this issue by using the Advanced Edit in the portal to replace the spaces surrounding the key value with newline `\n` characters, so I may try it again later).
 Since I had things working on Heroku using the legacy GitHub token method, I decided to just stick with that instead.
 It did require a small change to the app though, as the main Staticman repo does not allow using the legacy GitHub token method with v3 endpoints.
 You can read about the change in the section below.
