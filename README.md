@@ -6,7 +6,7 @@
 
 ## Info for Dan!!!
 
-I forked this repo from [the official Staticman repo](https://github.com/eduardoboucas/staticman) in order to deploy my own instance to Azure.
+I forked this repo from [the official Staticman repo](https://github.com/eduardoboucas/staticman) in order to deploy my own instance to Azure at https://dansblog-staticman.azurewebsites.net.
 Previously I had my own instance deployed to Heroku, which you can [view the archived code for here](https://github.com/deadlydog/deadlydog.github.io-staticman-heroku), but when Heroku removed their free tier I moved to Azure.
 
 To deploy to Azure, in the Azure portal I created a new Web App (App Service) on my Windows App Service Plan and granted it permissions to access this git repo.
@@ -17,14 +17,16 @@ In the Azure portal for the Web App, I added the following Application Settings:
 
 - `AKISMET_API_KEY`: [redacted]
 - `AKISMET_SITE`: https://blog.danskingdom.com
-- `GITHUB_TOKEN`: [redacted]
+- `GITHUB_APP_ID`: [redacted]
+- `GITHUB_PRIVATE_KEY`: [redacted]
 - `NODE_ENV`: production
 - `RSA_PRIVATE_KEY`: [redacted]
 - `SCM_DO_BUILD_DURING_DEPLOYMENT`: true
 
-To get the legacy `GITHUB_TOKEN` I originally followed [these instructions](https://www.datascienceblog.net/post/other/staticman_comments/) and [these ones](https://vincenttam.gitlab.io/post/2018-09-16-staticman-powered-gitlab-pages/2/) to setup a separate GitHub account.
-I gave that other GitHub account write permissions to my blog repo, and created a GitHub personal access token on that other account, which is the `GITHUB_TOKEN` I used in the Azure portal.
-Setting up the separate GitHub account is a safety measure so that if the `GITHUB_TOKEN` is compromised, it only has write permissions to the blog repo and not to all the repos in my regular GitHub account.
+To get the `GITHUB_APP_ID` and `GITHUB_PRIVATE_KEY` I followed [these instructions](https://staticman.net/docs/getting-started.html) to create a GitHub App that has permissions to open pull requests on my blog repo.
+
+I obtained the `AKISMET_API_KEY` and `AKISMET_SITE` values by creating a free Akismet account at <https://akismet.com>.
+Before using Akismet I received a ton of spam comment PRs on my blog, but after enabling it I rarely get any.
 
 ### Initial problems after deploying to Azure and resolution
 
@@ -48,10 +50,14 @@ This required a small change to the app, which you can read about in the section
 At this point I was now able to load the root website correctly, but posting comments still resulted in a 500 error.
 Looking in the application logs on the Azure portal again, I could see it was getting an error authenticating against GitHub.
 I had tried using the newer recommended method of creating a GitHub App to act as my Staticman bot for opening PRs by following the instructions at <https://staticman.net/docs/getting-started.html>, and getting the `GITHUB_APP_ID` and `GITHUB_PRIVATE_KEY` environment variables, but I kept getting an authentication error.
-I'm assuming it has something to do with copy-pasting the `GITHUB_PRIVATE_KEY` RSA multi-line pem file contents into the Azure portal and it losing some formatting or something, but I'm not certain (UPDATE: I found [this guide](https://hajekj.net/2020/04/15/staticman-setup-in-app-service/) which mentions how to overcome this issue by using the Advanced Edit in the portal to replace the spaces surrounding the key value with newline `\n` characters (e.g. ----BEGIN RSA PRIVATE KEY-----\n<value>\n-----END RSA PRIVATE KEY-----), so I may try it again later).
-Since I had things working on Heroku using the legacy GitHub token method, I decided to just stick with that instead.
-It did require a small change to the app though, as the main Staticman repo does not allow using the legacy GitHub token method with v3 endpoints.
-You can read about the change in the section below.
+Since I had things working on Heroku using the legacy `GITHUB_TOKEN` method, I decided to just stick with that instead.
+It did require a small change to the app though, which you can view in [PR #3](https://github.com/deadlydog/deadlydog.github.io-staticman/pull/3), as the main Staticman repo does not allow using the legacy GitHub token method with v3 endpoints.
+
+I later found [this guide](https://hajekj.net/2020/04/15/staticman-setup-in-app-service/) which mentions how to overcome the problem I was having with using the GitHub App.
+The problem is that copy-pasting the `GITHUB_PRIVATE_KEY` RSA multi-line pem file contents into the Azure portal replaces 2 newline characters with spaces.
+I fixed this issue by using the Advanced Edit in the portal to replace the spaces surrounding the key value with newline `\n` characters (e.g. change `----BEGIN RSA PRIVATE KEY----- <value> -----END RSA PRIVATE KEY-----` to `----BEGIN RSA PRIVATE KEY-----\n<value>\n-----END RSA PRIVATE KEY-----`).
+That fixed the issue, so I reverted my [PR #3](https://github.com/deadlydog/deadlydog.github.io-staticman/pull/3) change I had made, and replaced the `GITHUB_TOKEN` application setting with the `GITHUB_APP_ID` and `GITHUB_PRIVATE_KEY` application settings.
+This also allowed me to delete the separate GitHub account I had created, which was where the `GITHUB_TOKEN` personal access token had originally come from.
 
 ### Changes I've made since forking
 
@@ -59,7 +65,6 @@ Below is the list of things I changed from the original Staticman repo to make i
 
 - In [PR #2](https://github.com/deadlydog/deadlydog.github.io-staticman/pull/2) I updated the [server.js](server.js) file to use the `process.env.PORT` variable for the port number, rather than the PORT environment variable from the config.
   This is required for Azure node apps.
-- In [PR #3](https://github.com/deadlydog/deadlydog.github.io-staticman/pull/3) I updated [GitHub.js](lib/GitHub.js) to allow using the legacy GitHub token authentication method with v3 endpoints.
 
 In addition, I also updated the default GitHub Action that the Azure portal had created for deployments:
 
