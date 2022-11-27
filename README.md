@@ -7,7 +7,7 @@
 ## Info for Dan!!!
 
 This Staticman instance is used to provide comments for my blog at <https://blog.danskingdom.com>.
-You can also checkout [it's GitHub repo here](https://github.com/deadlydog/deadlydog.github.io).
+You can [checkout it's GitHub repo here](https://github.com/deadlydog/deadlydog.github.io).
 
 I forked this repo from [the official Staticman repo](https://github.com/eduardoboucas/staticman) in order to deploy my own instance to Azure at https://dansblog-staticman.azurewebsites.net.
 Previously I had my own instance deployed to Heroku, which you can [view the archived code for here](https://github.com/deadlydog/deadlydog.github.io-staticman-heroku), but when Heroku removed their free tier I moved to Azure.
