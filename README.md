@@ -31,6 +31,8 @@ To get the `GITHUB_APP_ID` and `GITHUB_PRIVATE_KEY` I followed [these instructio
 I obtained the `AKISMET_API_KEY` and `AKISMET_SITE` values by creating a free Akismet account at <https://akismet.com>.
 Before using Akismet I received a ton of spam comment PRs on my blog, but after enabling it I rarely get any.
 
+Keys and passwords stored in my blog's public config files have been encrypted using my Staticman instance's encryption endpoint, as per [the Staticman encryption docs](https://staticman.net/docs/encryption).
+
 ### Initial problems after deploying to Azure and resolution
 
 After deploying the code to Azure, I was getting a `You do not have permission to view this directory or page.` error message when viewing the site root <https://dansblog-staticman.azurewebsites.net>.
